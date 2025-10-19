@@ -7,12 +7,12 @@ let
     pp.matplotlib
     pp.numpy
     pp.pandas
-    (pp.callPackage ./default.nix { })
+    (pp.callPackage ./plot.nix { })
   ]);
 in
   pkgs.mkShell {
     packages = [
       my-python
-      pkgs.tetex
+      pkgs.texliveFull
     ];
   }
