@@ -1,6 +1,6 @@
 # FYP Plots
 
-Every `.py` file in [./src/scripts](./src/scripts) will generate a `.pgf` plot in [./plots](./plots).
+Every `.py` file in [./scripts](scripts/scripts) will generate a `.pgf` plot in [./plots](./plots).
 
 ### Setting up your LSP
 
@@ -9,9 +9,11 @@ Every `.py` file in [./src/scripts](./src/scripts) will generate a `.pgf` plot i
 
 ### Developing a new plot
 
-1. Copy [./src/scripts/histogram.py](./src/scripts/histogram.py) as a template. Put your new scirpt in [./src/scripts](./src/scripts)
+1. Copy [./scripts/histogram.py](scripts/scripts/histogram.py) as a template. Put your new scirpt in [./scripts](scripts/scripts)
 
 Make sure your script is executable with `chmod +x ...`
+
+If you put your script in a subdirectory, remember to fix any relative imports.
 
 ### Rebuilding all scripts
 

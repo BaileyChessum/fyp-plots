@@ -6,8 +6,13 @@ import subprocess
 
 print("Running all python scripts in ./scripts")
 
+exclude = {"reusable_code"}
+
 py_files = []
-for root, _, files in os.walk("src/scripts"):
+for root, dirs, files in os.walk("scripts"):
+    # Filter out dirs we dont want
+    dirs[:] = [d for d in dirs if d not in exclude]
+
     for file in files:
         if file.endswith(".py") and not file.startswith('__'):
             py_files.append(os.path.join(root, file))

@@ -7,7 +7,7 @@ import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from ..reusable_code.constants import TEXTWIDTH
+from .reusable_code.constants import TEXTWIDTH
 
 # The width of the plot, as a scalar to textwidth
 # Check the value used after {R} in \begin{wrapfigure} for the plot is the same
@@ -59,5 +59,9 @@ fig.tight_layout()
 # fig.set_size_inches(w=0.5 * TEXTWIDTH, h=0.5 * TEXTWIDTH * 2/3)
 
 # Generate the name of the plot based on the name of this python file
-filename = os.path.basename(__file__).removesuffix('.py')
+# Absolute path of the current file
+current_script_file = os.path.abspath(__file__)
+# Relative path from the current working directory
+relative_path = os.path.relpath(current_script_file, start=os.getcwd())
+filename = relative_path.removesuffix('.py').removeprefix('scripts/').replace('/', '.')
 plt.savefig(f'plots/{filename}.pgf')
