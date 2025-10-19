@@ -3,8 +3,22 @@
 import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 # This is based on this article: https://blog.timodenk.com/exporting-matplotlib-plots-to-latex/
+# The text width of our document is 19.58722cm, or 7.71411in.
+# But matplotlib only has methods for inches :/
+TEXTWIDTH = 7.71411
+
+# The width of the plot, as a scalar to textwidth
+# Check the value used after {R} in \begin{wrapfigure} for the plot is the same
+width = 0.5
+
+# Configure the size of the figure
+fig_width = width * TEXTWIDTH
+fig_height = fig_width * 0.6  # 3:2 aspect ratio
+
+
 # Make the graph export to .pgf, to be used by LaTeX
 matplotlib.use("pgf")
 matplotlib.rcParams.update({
@@ -23,7 +37,7 @@ x = mu + sigma * np.random.randn(437)
 
 num_bins = 50
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
 # the histogram of the data
 n, bins, patches = ax.hist(x, num_bins, density=1)
@@ -32,11 +46,16 @@ n, bins, patches = ax.hist(x, num_bins, density=1)
 y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
      np.exp(-0.5 * (1 / sigma * (bins - mu))**2))
 ax.plot(bins, y, '--')
+
 ax.set_xlabel('Smarts')
 ax.set_ylabel('Probability density')
-ax.set_title(r'Histogram of IQ: $\mu=100$, $\sigma=15$')
+# ax.set_title(r'Histogram of IQ: $\mu=100$, $\sigma=15$')
 
 # Tweak spacing to prevent clipping of ylabel
 fig.tight_layout()
-fig.set_size_inches(4.7747,3.5)
-plt.savefig('histogram.pgf')
+# fig.set_size_inches(w=0.5 * TEXTWIDTH, h=0.5 * TEXTWIDTH * 2/3)
+
+# Generate the name of the plot based on the name of this python file
+import os
+filename = os.path.basename(__file__).removesuffix('.py')
+plt.savefig(f'../plots/{filename}.pgf')
