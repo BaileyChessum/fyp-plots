@@ -17,7 +17,7 @@ for f in py_files:
     module = str(f).removesuffix('.py').replace('/', '.')
     print(f"  - {module}")
     p = subprocess.Popen(["python3", "-m", module])
-    processes.append((f, p))
+    processes.append((module, p))
 
 print("\nWaiting for scripts to finish")
 

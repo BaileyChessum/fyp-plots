@@ -60,4 +60,4 @@ fig.tight_layout()
 
 # Generate the name of the plot based on the name of this python file
 filename = os.path.basename(__file__).removesuffix('.py')
-plt.savefig(f'../plots/{filename}.pgf')
+plt.savefig(f'plots/{filename}.pgf')

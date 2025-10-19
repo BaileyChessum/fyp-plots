@@ -6,5 +6,5 @@ setup(name='plots-python-env',
       # Modules to import from other scripts:
       packages=find_packages(),
       # Executables
-      scripts=["plot.py"],
+      scripts=["build.py"],
       )
