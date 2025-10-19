@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+""" This file runs every file in ./scripts
+"""
 import os
 import subprocess
 
@@ -17,21 +18,18 @@ for f in py_files:
     p = subprocess.Popen(["python3", str(f)])
     processes.append((f, p))
 
-print("\nWaiting for scripts to finish\n")
+print("\nWaiting for scripts to finish")
 
 # Wait for all to finish
 for script, p in processes:
     p.wait()
-    print(f"{script} finished with exit code {p.returncode}")
+    print(f"  > {script} finished with exit code {p.returncode}")
 
-print()
 print("Finished generating .pgf plots in ./plots!")
-
-
-
-
-
-
-
-
-
+print()
+print("Now: ")
+print("1. Open overleaf at https://www.overleaf.com/project/683813102d4472a9b9234233")
+print("2. delete all the /plots folder on overleaf")
+print("3. drag and drop ./plots into overleaf")
+print("4. recompile in overleaf")
+print()

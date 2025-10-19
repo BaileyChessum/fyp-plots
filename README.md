@@ -21,7 +21,6 @@ Make sure your script is executable with `chmod +x ...`
 ./build.py
 ```
 
-2. Delete all the plots on [overleaf](https://www.overleaf.com/project/683813102d4472a9b9234233)
-3. Drag and drop [./plots](./plots) into [overleaf](https://www.overleaf.com/project/683813102d4472a9b9234233)
-4. Recompile in overleaf
-
+2. delete all the plots on [overleaf](https://www.overleaf.com/project/683813102d4472a9b9234233)
+3. drag and drop [./plots](./plots) into [overleaf](https://www.overleaf.com/project/683813102d4472a9b9234233)
+4. recompile in overleaf
