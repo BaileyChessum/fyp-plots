@@ -13,5 +13,6 @@ in
   pkgs.mkShell {
     packages = [
       my-python
+      pkgs.tetex
     ];
   }
