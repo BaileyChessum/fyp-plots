@@ -2,9 +2,16 @@
 
 Every `.py` file in [./scripts](./scripts) will generate a `.pgf` plot in [./plots](./plots).
 
+### Setting up your LSP
+
+1. Run `nix-build`
+2. Point your IDE to use `./result/bin/python3` as the python interpreter. It should get access to matplotlib, numpy.
+
 ### Developing a new plot
 
 1. Copy [./scripts/histogram.py](./scripts/histogram.py) as a template. Put your new scirpt in [./scripts](./scripts)
+
+Make sure your script is executable with `chmod +x ...`
 
 ### Rebuilding all scripts
 
