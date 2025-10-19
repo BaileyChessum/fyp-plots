@@ -7,7 +7,7 @@ import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from ..reusable_code.constants import TEXTWIDTH
+from scripts.reusable_code.constants import TEXTWIDTH
 
 # The width of the plot, as a scalar to textwidth
 # Check the value used after {R} in \begin{wrapfigure} for the plot is the same
