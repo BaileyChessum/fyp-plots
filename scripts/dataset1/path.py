@@ -116,7 +116,7 @@ start_point = plt.scatter([x[0]], [y[0]], c=colors[0], marker="o", )
 
 ax.legend(
     [proxy, proxy_odom, start_point],
-    ["RTK GPS Trajectory", "Odom Trajectory", "GPS & Odom Start"],
+    ["RTK GPS Trajectory", "Odom Trajectory", "GPS \& Odom Start"],
     fontsize=8,       # font size
     labelspacing=0.2, # vertical spacing between entries
     handlelength=1.5, # length of lines in legend
