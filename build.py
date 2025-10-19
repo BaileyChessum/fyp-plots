@@ -7,15 +7,16 @@ import subprocess
 print("Running all python scripts in ./scripts")
 
 py_files = []
-for root, _, files in os.walk("scripts"):
+for root, _, files in os.walk("src/scripts"):
     for file in files:
         if file.endswith(".py") and not file.startswith('__'):
             py_files.append(os.path.join(root, file))
 
 processes = []
 for f in py_files:
-    print(f"  - {f}")
-    p = subprocess.Popen(["python3", str(f)])
+    module = str(f).removesuffix('.py').replace('/', '.')
+    print(f"  - {module}")
+    p = subprocess.Popen(["python3", "-m", module])
     processes.append((f, p))
 
 print("\nWaiting for scripts to finish")
