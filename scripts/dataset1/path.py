@@ -24,7 +24,7 @@ cmap_name = "plasma"
 
 # Configure the size of the figure
 fig_width = width * TEXTWIDTH
-fig_height = fig_width * 0.66666  # 3:2 aspect ratio
+fig_height = fig_width * 0.8 # 3:2 aspect ratio
 
 # Make the graph export to .pgf, to be used by LaTeX
 if not INTERACTIVE:
@@ -68,8 +68,8 @@ points = np.array([x, y]).T.reshape(-1, 1, 2)
 segments = np.concatenate([points[:-1], points[1:]], axis=1)
 lc = LineCollection(segments, cmap=cmap_name, norm=plt.Normalize(t.min(), t.max()))
 lc.set_array(t)
-lc.set_linewidth(1.2)
-lc.set_linestyle("dashed")
+lc.set_linewidth(2)
+lc.set_linestyle("solid")
 lc.set_rasterized(False)
 ax.add_collection(lc)
 ax.autoscale()
@@ -83,29 +83,31 @@ ticks = np.linspace(t.min(), t.max(), 11)
 cbar = plt.colorbar(sm, ax=ax, ticks=ticks)
 cbar.set_label("Time (s)", fontsize=9)
 cbar.ax.minorticks_off()
+cbar.ax.tick_params(labelsize=6)
 cbar.solids.set_rasterized(False)
 
 # Add the RTK GPS line to the legend with a proxy artist
 colors = cmap(np.linspace(0, 1, 256))  # RGBA array
 avg_color = colors[:, :3].mean(axis=0)  # average RGB (ignore alpha)
-proxy = Line2D([0], [0], color=avg_color, linestyle="dashed", lw=1.5)  # representative color
+proxy = Line2D([0], [0], color=avg_color, linestyle="solid", lw=1.5)  # representative color
 
 # Plot Odom
 # ------------------------------------------------
-points_odom = np.array([x_odom, y_odom]).T.reshape(-1, 1, 2)
-segments_odom = np.concatenate([points_odom[:-1], points_odom[1:]], axis=1)
-lc_odom = LineCollection(segments_odom, cmap=cmap_name, norm=plt.Normalize(t.min(), t.max()))
-lc_odom.set_array(t)
-lc_odom.set_linewidth(1.2)
-lc_odom.set_linestyle("dotted")
-lc_odom.set_rasterized(False)
-ax.add_collection(lc_odom)
-ax.autoscale()
+# points_odom = np.array([x_odom, y_odom]).T.reshape(-1, 1, 2)
+# segments_odom = np.concatenate([points_odom[:-1], points_odom[1:]], axis=1)
+# lc_odom = LineCollection(segments_odom, cmap=cmap_name, norm=plt.Normalize(t.min(), t.max()))
+# lc_odom.set_array(t)
+# lc_odom.set_linewidth(1.2)
+# lc_odom.set_linestyle("dotted")
+# lc_odom.set_rasterized(False)
+# ax.add_collection(lc_odom)
+# ax.autoscale()
 
 # Add the odom line to the legend with a proxy artist
-colors = cmap(np.linspace(0, 1, 256))  # RGBA array
-avg_color = colors[:, :3].mean(axis=0)  # average RGB (ignore alpha)
-proxy_odom = Line2D([0], [0], color=avg_color, linestyle="dotted", lw=1.5)  # representative color
+# colors = cmap(np.linspace(0, 1, 256))  # RGBA array
+# avg_color = colors[:, :3].mean(axis=0)  # average RGB (ignore alpha)
+# proxy_odom = Line2D([0], [0], color=avg_color, linestyle="dotted", lw=1.5)  # representative color
+lc_odom, = plt.plot(x_odom, y_odom, c='blue', linestyle='dashed', lw=1)
 
 # ------------------------------------------------
 
@@ -115,8 +117,8 @@ proxy_odom = Line2D([0], [0], color=avg_color, linestyle="dotted", lw=1.5)  # re
 start_point = plt.scatter([x[0]], [y[0]], c=colors[0], marker="o", )
 
 ax.legend(
-    [proxy, proxy_odom, start_point],
-    ["RTK GPS Trajectory", "Odom Trajectory", "GPS \& Odom Start"],
+    [proxy, start_point, lc_odom],
+    ["RTK GPS Trajectory", "GPS \& Odom Start", "Odom Trajectory"],
     fontsize=8,       # font size
     labelspacing=0.2, # vertical spacing between entries
     handlelength=1.5, # length of lines in legend
@@ -126,8 +128,6 @@ ax.legend(
 )
 ax.set_xlabel('X Position (m)', fontsize=9)
 ax.set_ylabel('Y Position (m)', fontsize=9)
-
-
 
 # Smaller tick labels
 plt.xticks(fontsize=6)
