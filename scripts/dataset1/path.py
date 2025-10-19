@@ -7,6 +7,7 @@ import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+from matplotlib.collections import LineCollection
 from scripts.reusable_code.constants import TEXTWIDTH
 
 # The width of the plot, as a scalar to textwidth
@@ -37,22 +38,42 @@ np.random.seed(19680801)
 # example data
 mu = 100  # mean of distribution
 sigma = 15  # standard deviation of distribution
-x = mu + sigma * np.random.randn(437)
-num_bins = 50
 
-# the histogram of the data
-n, bins, patches = ax.hist(x, num_bins, density=1)
+rng = np.random.default_rng()
 
-# add a 'best fit' line
-y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
-     np.exp(-0.5 * (1 / sigma * (bins - mu))**2))
-ax.plot(bins, y, '--')
+x = [rng.random() for _ in range(100)]
+y = [rng.random() for _ in range(100)]
+t = np.arange(len(x))  # time steps
+
+# Try color the line differently over time
+points = np.array([x, y]).T.reshape(-1, 1, 2)
+segments = np.concatenate([points[:-1], points[1:]], axis=1)
+
+from matplotlib.collections import LineCollection
+lc = LineCollection(segments, cmap='viridis', norm=plt.Normalize(t.min(), t.max()))
+lc.set_array(t)
+lc.set_linewidth(2)
+
+ax.add_collection(lc)
+ax.autoscale()
+
+# plt.plot(x, y, color='red', linestyle='-', linewidth=1, label='RTK GPS (measured)')
+
+plt.colorbar(lc, label='Time')
+
 # ------------------------------------------------
 
 # Layout:
-ax.set_xlabel('Smarts')
-ax.set_ylabel('Probability density')
 # ax.set_title(r'Histogram of IQ: $\mu=100$, $\sigma=15$')
+
+ax.set_xlabel('X position', fontsize=9)
+ax.set_ylabel('Y position', fontsize=9)
+
+# Smaller tick labels
+plt.xticks(fontsize=9)
+plt.yticks(fontsize=9)
+
+plt.legend()
 
 fig.tight_layout()
 # Originally from the article: Tweak spacing to prevent clipping of ylabel
@@ -64,4 +85,5 @@ current_script_file = os.path.abspath(__file__)
 # Relative path from the current working directory
 relative_path = os.path.relpath(current_script_file, start=os.getcwd())
 filename = relative_path.removesuffix('.py').removeprefix('scripts/').replace('/', '.')
+
 plt.savefig(f'plots/{filename}.pgf')
