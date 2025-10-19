@@ -8,7 +8,7 @@ print("Running all python scripts in ./scripts")
 py_files = []
 for root, _, files in os.walk("scripts"):
     for file in files:
-        if file.endswith(".py"):
+        if file.endswith(".py") and not file.startswith('__'):
             py_files.append(os.path.join(root, file))
 
 processes = []
