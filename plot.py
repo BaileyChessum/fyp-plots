@@ -4,6 +4,7 @@ import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 
+# This is based on this article: https://blog.timodenk.com/exporting-matplotlib-plots-to-latex/
 # Make the graph export to .pgf, to be used by LaTeX
 matplotlib.use("pgf")
 matplotlib.rcParams.update({
