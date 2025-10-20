@@ -13,8 +13,8 @@ from matplotlib.lines import Line2D
 from typing import List
 
 # use this to preview the graph
-INTERACTIVE = False
-# INTERACTIVE = True
+# INTERACTIVE = False
+INTERACTIVE = True
 
 # The width of the plot, as a scalar to textwidth
 # Check the value used after {R} in \begin{wrapfigure} for the plot is the same
@@ -100,7 +100,7 @@ class RmsePlot:
 
 class OdomPlot:
     """ Struct class to store everything we need for a single odom plot """
-    def __init__(self, name: str, raw_data, color, linestyle: str | None = None, lw: float | None = 1):
+    def __init__(self, name: str, raw_data, color, linestyle: str | None = "solid", lw: float | None = 0.5):
         self.name = name
         self.color = color
         self.linestyle = linestyle
@@ -124,25 +124,25 @@ class OdomPlot:
 # We plot them when we construct the legend
 odom_plots: List[OdomPlot] = [
     OdomPlot("RTAB-Map",
-             color="C0", linestyle="dashed",
+             color="C0",
              raw_data=np.load("raw_data/" + "rtabmap_slam_traj.npz")["data"]),
     OdomPlot("ORB-SLAM3 (RGBD)",
-             color="C1", linestyle="dashed",
+             color="C1",
              raw_data=np.load("raw_data/" + "orb_slam3_traj.npz")["data"]),
     OdomPlot("DROID-SLAM (RGBD)",
-             color="C2", linestyle="dashed",
+             color="C2",
              raw_data=np.load("raw_data/" + "droid_slam_traj.npz")["data"]),
     OdomPlot("ORB-SLAM3 (Mono)",
-             color="C3", linestyle="dashed",
+             color="C3",
              raw_data=np.load("raw_data/" + "orb_slam3_mono_traj.npz")["data"]),
     OdomPlot("DROID-SLAM (Mono)",
-             color="C4", linestyle="dashed",
+             color="C4",
              raw_data=np.load("raw_data/" + "droid_slam_mono_traj.npz")["data"]),
     OdomPlot("MAST3R-SLAM",
-             color="C5", linestyle="dashed",
+             color="C5",
              raw_data=np.load("raw_data/" + "mast3r_slam_traj.npz")["data"]),
     OdomPlot("AnyFeature-VSLAM",
-             color="C6", linestyle="dashed",
+             color="C6",
              raw_data=np.load("raw_data/" + "anyfeature_slam_traj.npz")["data"]),
 ]
 
@@ -179,8 +179,8 @@ fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(fig_width, fig_height))
 # Below is some example plotting from the article:
 # ------------------------------------------------
 
-
-
+for odom in odom_plots:
+    odom.plot(ax1)
 
 # Plot RTK GPS
 # ------------------------------------------------
@@ -190,7 +190,7 @@ points = np.array([x, y]).T.reshape(-1, 1, 2)
 segments = np.concatenate([points[:-1], points[1:]], axis=1)
 lc = LineCollection(segments, cmap=cmap_name, norm=plt.Normalize(t.min(), t.max()))
 lc.set_array(t)
-lc.set_linewidth(2)
+lc.set_linewidth(1.5)
 lc.set_linestyle("solid")
 lc.set_rasterized(False)
 ax1.add_collection(lc)
@@ -244,12 +244,16 @@ ax2.legend(
 ax2.tick_params(axis='x', which='both', bottom=False, top=True, labelbottom=False)
 ax2.autoscale()
 
-ax2.set_ylabel('Cumulative RMSE (solid) (m)\nAbsolute Trajectory Error (dashed) (m)', fontsize=9)
+ax2.set_ylabel('Cumulative RMSE (solid) (m)\nAbsolute Trajectory Error (dashed) (m)', fontsize=7.5)
 ax2.set_xlim(0, len(x)-1)
 
 # Smaller tick labels
 plt.xticks(fontsize=6)
 plt.yticks(fontsize=6)
+ax1.tick_params(axis='x', labelsize=6)  # x-axis tick labels
+ax1.tick_params(axis='y', labelsize=6)  # y-axis tick labels
+ax2.tick_params(axis='x', labelsize=6)  # x-axis tick labels
+ax2.tick_params(axis='y', labelsize=6)  # y-axis tick labels
 
 # plt.legend()
 
