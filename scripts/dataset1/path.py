@@ -10,10 +10,11 @@ import os
 from matplotlib.collections import LineCollection
 from scripts.reusable_code.constants import TEXTWIDTH
 from matplotlib.lines import Line2D
+from typing import List
 
 # use this to preview the graph
-INTERACTIVE = False
-# INTERACTIVE = True
+# INTERACTIVE = False
+INTERACTIVE = True
 
 # The width of the plot, as a scalar to textwidth
 # Check the value used after {R} in \begin{wrapfigure} for the plot is the same
@@ -41,29 +42,58 @@ if not INTERACTIVE:
 else:
     matplotlib.use("TkAgg")
 
+# Some random gps data for testing
+np.random.seed(19680801)
+rng = np.random.default_rng()
+x = [rng.random() for _ in range(6)]
+y = [rng.random() for _ in range(6)]
+
+class OdomPlot:
+    """ Struct class to store everything we need for a single odom plot """
+    def __init__(self, name: str, x, y, color, linestyle: str | None = None, lw: float | None = 1):
+        self.name = name
+        self.color = color
+        self.linestyle = linestyle
+        self.x = x
+        self.y = y
+        self.lw = lw
+
+        # The future result of self.plot
+        self.plt: Line2D | None = None
+
+    def plot(self) -> Line2D:
+        if self.plt is None:
+            self.plt, = plt.plot(self.x, self.y, c=self.color, linestyle=self.linestyle, lw=self.lw)
+        return self.plt
+
+    def legend_name(self) -> str:
+        return self.name + " Trajectory"
+
+
+# Add new odom plots here!
+# We plot them when we construct the legend
+odom_plots: List[OdomPlot] = [
+    OdomPlot("RTAB-Map", color="blue", linestyle="dashed",
+             x=[x[0]] + [rng.random() for _ in range(5)],
+             y=[y[0]] + [rng.random() for _ in range(5)]),
+    OdomPlot("ORB-SLAM3", color="red", linestyle="dashed",
+             x=[x[0]] + [rng.random() for _ in range(5)],
+             y=[y[0]] + [rng.random() for _ in range(5)]),
+]
+
 # create figure and axes from above config
 fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
 # Below is some example plotting from the article:
 # ------------------------------------------------
-np.random.seed(19680801)
 
-# example data
-rng = np.random.default_rng()
-
-x = [rng.random() for _ in range(21)]
-y = [rng.random() for _ in range(21)]
-
-x_odom = [x[0]] + [rng.random() for _ in range(20)]
-y_odom = [y[0]] + [rng.random() for _ in range(20)]
-
-t = np.arange(len(x))  # time steps
 
 
 
 # Plot RTK GPS
 # ------------------------------------------------
 # Try color the line differently over time
+t = np.arange(len(x))  # time steps
 points = np.array([x, y]).T.reshape(-1, 1, 2)
 segments = np.concatenate([points[:-1], points[1:]], axis=1)
 lc = LineCollection(segments, cmap=cmap_name, norm=plt.Normalize(t.min(), t.max()))
@@ -91,24 +121,6 @@ colors = cmap(np.linspace(0, 1, 256))  # RGBA array
 avg_color = colors[:, :3].mean(axis=0)  # average RGB (ignore alpha)
 proxy = Line2D([0], [0], color=avg_color, linestyle="solid", lw=1.5)  # representative color
 
-# Plot Odom
-# ------------------------------------------------
-# points_odom = np.array([x_odom, y_odom]).T.reshape(-1, 1, 2)
-# segments_odom = np.concatenate([points_odom[:-1], points_odom[1:]], axis=1)
-# lc_odom = LineCollection(segments_odom, cmap=cmap_name, norm=plt.Normalize(t.min(), t.max()))
-# lc_odom.set_array(t)
-# lc_odom.set_linewidth(1.2)
-# lc_odom.set_linestyle("dotted")
-# lc_odom.set_rasterized(False)
-# ax.add_collection(lc_odom)
-# ax.autoscale()
-
-# Add the odom line to the legend with a proxy artist
-# colors = cmap(np.linspace(0, 1, 256))  # RGBA array
-# avg_color = colors[:, :3].mean(axis=0)  # average RGB (ignore alpha)
-# proxy_odom = Line2D([0], [0], color=avg_color, linestyle="dotted", lw=1.5)  # representative color
-lc_odom, = plt.plot(x_odom, y_odom, c='blue', linestyle='dashed', lw=1)
-
 # ------------------------------------------------
 
 # Layout:
@@ -117,8 +129,8 @@ lc_odom, = plt.plot(x_odom, y_odom, c='blue', linestyle='dashed', lw=1)
 start_point = plt.scatter([x[0]], [y[0]], c=colors[0], marker="o", )
 
 ax.legend(
-    [proxy, start_point, lc_odom],
-    ["RTK GPS Trajectory", "GPS \& Odom Start", "Odom Trajectory"],
+    [proxy, start_point] + [odom.plot() for odom in odom_plots],
+    ["RTK GPS Trajectory", "GPS \& Odom Start"] + [odom.legend_name() for odom in odom_plots],
     fontsize=8,       # font size
     labelspacing=0.2, # vertical spacing between entries
     handlelength=1.5, # length of lines in legend
