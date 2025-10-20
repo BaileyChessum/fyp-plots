@@ -69,7 +69,7 @@ plt.yticks(fontsize=6)
 plt.legend(
     fontsize=6,       # font size
     labelspacing=0.125, # vertical spacing between entries
-    handlelength=1.5, # length of lines in legend
+    handlelength=1.2, # length of lines in legend
     handleheight=1,   # height of line box
     markerscale=0.5,  # scale of markers
     borderaxespad=0.2 # padding around legend
