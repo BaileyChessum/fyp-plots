@@ -13,8 +13,8 @@ from matplotlib.lines import Line2D
 from typing import List
 
 # use this to preview the graph
-# INTERACTIVE = False
-INTERACTIVE = True
+INTERACTIVE = False
+# INTERACTIVE = True
 
 # The width of the plot, as a scalar to textwidth
 # Check the value used after {R} in \begin{wrapfigure} for the plot is the same
@@ -131,8 +131,8 @@ start_point = plt.scatter([x[0]], [y[0]], c=colors[0], marker="o", )
 ax.legend(
     [proxy, start_point] + [odom.plot() for odom in odom_plots],
     ["RTK GPS Trajectory", "GPS \& Odom Start"] + [odom.legend_name() for odom in odom_plots],
-    fontsize=8,       # font size
-    labelspacing=0.2, # vertical spacing between entries
+    fontsize=7.5,       # font size
+    labelspacing=0.125, # vertical spacing between entries
     handlelength=1.5, # length of lines in legend
     handleheight=1,   # height of line box
     markerscale=0.5,  # scale of markers
