@@ -225,6 +225,7 @@ proxy = Line2D([0], [0], color=avg_color, linestyle="solid", lw=1.5)  # represen
 # ax.set_title(r'Histogram of IQ: $\mu=100$, $\sigma=15$')
 
 start_point = ax1.scatter([x[0]], [y[0]], c=colors[0], marker="o", )
+end_point = ax1.scatter([x[len(x)-1]], [y[len(y)-1]], c=colors[len(colors)-1], marker="X", lw=0.65/2, zorder=-10)
 
 endpoint_marker = MarkerStyle("X")
 enpoint_proxy_path = endpoint_marker.get_path().transformed(endpoint_marker.get_transform())
