@@ -100,7 +100,7 @@ class RmsePlot:
 
 class OdomPlot:
     """ Struct class to store everything we need for a single odom plot """
-    def __init__(self, name: str, raw_data, color, linestyle: str | None = "solid", lw: float | None = 0.5):
+    def __init__(self, name: str, raw_data, color, linestyle: str | None = "solid", lw: float | None = 0.65):
         self.name = name
         self.color = color
         self.linestyle = linestyle
@@ -188,7 +188,7 @@ for odom in odom_plots:
 t = np.arange(len(x))  # time steps
 points = np.array([x, y]).T.reshape(-1, 1, 2)
 segments = np.concatenate([points[:-1], points[1:]], axis=1)
-lc = LineCollection(segments, cmap=cmap_name, norm=plt.Normalize(t.min(), t.max()))
+lc = LineCollection(segments, cmap=cmap_name, norm=plt.Normalize(t.min(), t.max()), zorder=10)
 lc.set_array(t)
 lc.set_linewidth(1.5)
 lc.set_linestyle("solid")
