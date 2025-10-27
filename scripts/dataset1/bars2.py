@@ -15,8 +15,8 @@ from matplotlib.container import BarContainer
 import pandas as pd
 
 # use this to preview the graph
-# INTERACTIVE = False
-INTERACTIVE = True
+INTERACTIVE = False
+# INTERACTIVE = True
 
 # The width of the plot, as a scalar to textwidth
 # Check the value used after {R} in \begin{wrapfigure} for the plot is the same
