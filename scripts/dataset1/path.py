@@ -7,10 +7,15 @@ import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from matplotlib.collections import LineCollection
+from matplotlib.collections import LineCollection, PathCollection
+from matplotlib.markers import MarkerStyle
+from matplotlib.transforms import IdentityTransform
+
 from scripts.reusable_code.constants import TEXTWIDTH
 from matplotlib.lines import Line2D
 from typing import List
+
+PREFIX = "raw_data/"
 
 # use this to preview the graph
 INTERACTIVE = False
@@ -45,7 +50,7 @@ else:
 # Some random gps data for testing
 np.random.seed(19680801)
 rng = np.random.default_rng()
-gps_raw_data=np.load("raw_data/" + "gps_ground_truth.npz")["data"]
+gps_raw_data=np.load(PREFIX + "gps_ground_truth.npz")["data"]
 x = gps_raw_data[:,0]
 y = gps_raw_data[:,1]
 
@@ -69,7 +74,7 @@ class RmsePlot:
         y = raw_data[:,1]
 
         # x and y should by numpy arrays
-        self.sqdist = ((x - gps.x)**2) + ((y - gps.y)**2)
+        self.sqdist = ((x - gps.x[:len(x)])**2) + ((y - gps.y[:len(y)])**2)
         self.dist = np.sqrt(self.sqdist)
 
         # overall RMSE
@@ -110,11 +115,17 @@ class OdomPlot:
 
         # The future result of self.plot
         self.plt: Line2D | None = None
+        self.plt_endpoint: Line2D | None = None
 
     def plot(self, ax) -> Line2D:
         if self.plt is None:
-            self.plt, = ax.plot(self.x, self.y, c=self.color, linestyle=self.linestyle, lw=self.lw)
+            self.plt, = ax.plot(self.x, self.y, c=self.color, linestyle=self.linestyle, lw=self.lw, zorder=10)
         return self.plt
+
+    def plot_endpoint(self, ax) -> Line2D:
+        if self.plt_endpoint is None:
+            self.plt_endpoint = ax.scatter([self.x[len(self.x) - 1]], [self.y[len(self.y) - 1]], c=self.color,  marker="X", lw=self.lw/2, zorder=100)
+        return self.plt_endpoint
 
     def legend_name(self) -> str:
         return self.name + " Trajectory"
@@ -125,25 +136,25 @@ class OdomPlot:
 odom_plots: List[OdomPlot] = [
     OdomPlot("RTAB-Map",
              color="C0",
-             raw_data=np.load("raw_data/" + "rtabmap_slam_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "rtabmap_slam_traj.npz")["data"]),
     OdomPlot("ORB-SLAM3 (RGBD)",
              color="C1",
-             raw_data=np.load("raw_data/" + "orb_slam3_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "orb_slam3_traj.npz")["data"]),
     OdomPlot("DROID-SLAM (RGBD)",
              color="C2",
-             raw_data=np.load("raw_data/" + "droid_slam_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "droid_slam_traj.npz")["data"]),
     OdomPlot("ORB-SLAM3 (Mono)",
              color="C3",
-             raw_data=np.load("raw_data/" + "orb_slam3_mono_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "orb_slam3_mono_traj.npz")["data"]),
     OdomPlot("DROID-SLAM (Mono)",
              color="C4",
-             raw_data=np.load("raw_data/" + "droid_slam_mono_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "droid_slam_mono_traj.npz")["data"]),
     OdomPlot("MAST3R-SLAM",
              color="C5",
-             raw_data=np.load("raw_data/" + "mast3r_slam_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "mast3r_slam_traj.npz")["data"]),
     OdomPlot("AnyFeature-VSLAM",
              color="C6",
-             raw_data=np.load("raw_data/" + "anyfeature_slam_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "anyfeature_slam_traj.npz")["data"]),
 ]
 
 gps = GpsData(x, y)
@@ -152,25 +163,25 @@ gps = GpsData(x, y)
 rmse_plots: List[RmsePlot] = [
     RmsePlot(gps, "RTAB-Map",
              color="C0",
-             raw_data=np.load("raw_data/" + "rtabmap_slam_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "rtabmap_slam_traj.npz")["data"]),
     RmsePlot(gps, "ORB-SLAM3 (RGBD)",
              color="C1",
-             raw_data=np.load("raw_data/" + "orb_slam3_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "orb_slam3_traj.npz")["data"]),
     RmsePlot(gps, "DROID-SLAM (RGBD)",
              color="C2",
-             raw_data=np.load("raw_data/" + "droid_slam_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "droid_slam_traj.npz")["data"]),
     RmsePlot(gps, "ORB-SLAM3 (Mono)",
              color="C3",
-             raw_data=np.load("raw_data/" + "orb_slam3_mono_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "orb_slam3_mono_traj.npz")["data"]),
     RmsePlot(gps, "DROID-SLAM (Mono)",
              color="C4",
-             raw_data=np.load("raw_data/" + "droid_slam_mono_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "droid_slam_mono_traj.npz")["data"]),
     RmsePlot(gps, "MAST3R-SLAM",
              color="C5",
-             raw_data=np.load("raw_data/" + "mast3r_slam_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "mast3r_slam_traj.npz")["data"]),
     RmsePlot(gps, "AnyFeature-VSLAM",
              color="C6",
-             raw_data=np.load("raw_data/" + "anyfeature_slam_traj.npz")["data"]),
+             raw_data=np.load(PREFIX + "anyfeature_slam_traj.npz")["data"]),
 ]
 
 # create figure and axes from above config
@@ -214,10 +225,16 @@ proxy = Line2D([0], [0], color=avg_color, linestyle="solid", lw=1.5)  # represen
 # ax.set_title(r'Histogram of IQ: $\mu=100$, $\sigma=15$')
 
 start_point = ax1.scatter([x[0]], [y[0]], c=colors[0], marker="o", )
+end_point = ax1.scatter([x[len(x)-1]], [y[len(y)-1]], c=colors[len(colors)-1], marker="X", lw=0.65/2, zorder=-10)
+
+endpoint_marker = MarkerStyle("X")
+enpoint_proxy_path = endpoint_marker.get_path().transformed(endpoint_marker.get_transform())
+endpoint_proxy = PathCollection([enpoint_proxy_path], sizes=[100], facecolors=np.array([[0,0,0,1]]), transOffset=IdentityTransform(), offsets=np.array([[0,0]]))  # representative color
+endpoint_proxy.set_transform(IdentityTransform())
 
 ax1.legend(
-    [proxy, start_point] + [odom.plot(ax1) for odom in odom_plots],
-    ["RTK GPS Trajectory", "GPS \& Odom Start"] + [odom.legend_name() for odom in odom_plots],
+    [proxy, start_point] + [odom.plot(ax1) for odom in odom_plots] + [endpoint_proxy],
+    ["RTK GPS Trajectory", "GPS \& Odom Start"] + [odom.legend_name() for odom in odom_plots] + ["Trajectory Endpoint"],
     fontsize=6,       # font size
     labelspacing=0.125, # vertical spacing between entries
     handlelength=1.5, # length of lines in legend
@@ -225,6 +242,7 @@ ax1.legend(
     markerscale=0.5,  # scale of markers
     borderaxespad=0.2 # padding around legend
 )
+[odom.plot_endpoint(ax1) for odom in odom_plots]
 ax1.set_xlabel('X Position (m)', fontsize=9)
 ax1.set_ylabel('Y Position (m)', fontsize=9)
 

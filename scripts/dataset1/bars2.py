@@ -13,14 +13,15 @@ from matplotlib.lines import Line2D
 from typing import List
 from matplotlib.container import BarContainer
 import pandas as pd
+import matplotlib.transforms as mtransforms
 
 # use this to preview the graph
-INTERACTIVE = False
-# INTERACTIVE = True
+# INTERACTIVE = False
+INTERACTIVE = True
 
 # The width of the plot, as a scalar to textwidth
 # Check the value used after {R} in \begin{wrapfigure} for the plot is the same
-width = 1.0
+width = 0.65
 
 # https://matplotlib.org/stable/users/explain/colors/colormaps.html
 cmap_name = "plasma"
@@ -49,7 +50,7 @@ else:
 fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
 data = {
-    "SLAM System": ["RTABMap-SLAM (LiDAR)", "ORB-SLAM3 (RGBD)", "DROID-SLAM (RGBD)", "ORB-SLAM3 (Mono)", "DROID-SLAM (Mono)", "MASt3R-SLAM", "Any-Feature-VSLAM"],
+    "SLAM System": ["RTABMap-SLAM\n(LiDAR)", "ORB-SLAM\n(RGBD)", "DROID-SLAM\n(RGBD)", "ORB-SLAM3\n(Mono)", "DROID-SLAM\n(Mono)", "MASt3R-SLAM\n(Mono)", "AnyFeature-VSLAM\n(Mono)"],
     "Peak CPU (%)": [78, 66, 62, 32, 45, 32, 71],
     "Peak Memory (%)": [65, 45, 75, 72, 63, 52, 55],
     "Peak I/O (%)": [46, 27, 31, 60, 52, 57, 25],
@@ -63,33 +64,36 @@ df = pd.DataFrame(data)
 thing = df.plot(x="SLAM System", kind="bar", ax=ax)
 
 # plt.title("Peak Resource Usage by SLAM Systems", fontsize=16)
-plt.ylabel("Total Power Consumption (W)", fontsize=9)
-plt.xlabel("SLAM Algorithm", fontsize=9) # Add xlabel for clarity
-plt.xticks(rotation=45, ha="right", fontsize=9)
+plt.ylabel("Resource Utilisation (%)", fontsize=7.5)
+# plt.xlabel("SLAM Algorithm", fontsize=7.5) # Add xlabel for clarity
+plt.xticks(rotation=40, ha="right", fontsize=7.5)
 plt.yticks(fontsize=6)
 plt.legend(
-    fontsize=6,       # font size
-    labelspacing=0.125, # vertical spacing between entries
-    handlelength=1.2, # length of lines in legend
-    handleheight=1,   # height of line box
-    markerscale=0.5,  # scale of markers
+    fontsize=5.75,       # font size
+    labelspacing=0.1, # vertical spacing between entries
+    handlelength=1, # length of lines in legend
+    handleheight=0.95,   # height of line box
+    markerscale=0.35,  # scale of markers
     borderaxespad=0.2 # padding around legend
 )
+
+# Move x tick labels right
+offset = mtransforms.ScaledTranslation(6/72, 4/72, fig.dpi_scale_trans)
+for label in ax.get_xticklabels():
+    label.set_transform(label.get_transform() + offset)
+
+ax.xaxis.label.set_visible(False)
+plt.ylim(0, 110)
 
 # Add data labels to the bars with adjusted padding
 for container in ax.containers:
     if isinstance(container, BarContainer):
         ax.bar_label(container, fmt='%d%%', label_type='edge', padding=1, fontsize=9) # Reduced padding
 
-#ax1.set_ylim(0, max(df["Total Power Consumption (W)"])*1.2)
-#ax2.set_ylim(0, max(df["Peak Current"])*1.2)
-
 plt.tight_layout()
 plt.grid(axis='y', linestyle='--', alpha=0.7) # Add a horizontal grid
 
 fig.tight_layout()
-# Originally from the article: Tweak spacing to prevent clipping of ylabel
-# fig.set_size_inches(w=0.5 * TEXTWIDTH, h=0.5 * TEXTWIDTH * 2/3)
 
 # Generate the name of the plot based on the name of this python file
 # Absolute path of the current file
