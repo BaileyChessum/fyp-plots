@@ -14,14 +14,16 @@ from typing import List
 from matplotlib.container import BarContainer
 import pandas as pd
 import matplotlib.transforms as mtransforms
+import colorsys
+import matplotlib.colors as mcol
 
 # use this to preview the graph
-# INTERACTIVE = False
-INTERACTIVE = True
+INTERACTIVE = False
+# INTERACTIVE = True
 
 # The width of the plot, as a scalar to textwidth
 # Check the value used after {R} in \begin{wrapfigure} for the plot is the same
-width = 0.5
+width = 5/11
 
 # https://matplotlib.org/stable/users/explain/colors/colormaps.html
 cmap_name = "plasma"
@@ -39,23 +41,36 @@ def plot(fig, ax1):
     bar_width = 0.35
     x = np.arange(len(df["SLAM System"]))
 
+    # Text colors
+    def saturate_cx(i, hs=0.0, ls=0.5, ss=0.7):
+        c = plt.get_cmap("tab10")(i)
+        r, g, b = mcol.to_rgb(c)
+        h, l, s = colorsys.rgb_to_hls(r, g, b)
+        return colorsys.hls_to_rgb((h + hs * (1 if h > 0.2 and h < 0.95 else -1)) % 1.0, ls * l, 1 - (ss * (1 - s)))
+    def desaturate_cx(i, hs=-0.02, ls=0.75, ss=0.25):
+        c = plt.get_cmap("tab10")(i)
+        r, g, b = mcol.to_rgb(c)
+        h, l, s = colorsys.rgb_to_hls(r, g, b)
+        return colorsys.hls_to_rgb((h + hs * (1 if h > 0.2 and h < 0.95 else -1)) % 1.0, 1 - (ls * (1-l)), ss * s)
+    text_c0 = saturate_cx(0)
+    text_c3 = saturate_cx(3)
+
     # Bar width and positions
     # Plot Total Power Consumption (primary y-axis)
     bars1 = ax1.bar(x - bar_width/2, df["Total Power Consumption (mW h)"], color="C0", width=bar_width, label="Total Power Consumption (mW h)")
 
     # ax1.set_xlabel("SLAM Algorithm", fontsize=9)
-    ax1.set_ylabel("Total Power Consumption (mW h)", color='C0', fontsize=7.5)
+    ax1.set_ylabel("Total Power Consumption (mW h)", color=text_c0, fontsize=7.5)
     ax1.set_xticks(x)
     ax1.set_xticklabels(df["SLAM System"], rotation=45, ha="right", fontsize=7)
-    ax1.tick_params(axis='y', labelsize=6, labelcolor='C0')
-    ax1.grid(axis='y', linestyle='--', alpha=0.7)
+    ax1.tick_params(axis='y', labelsize=6, labelcolor=text_c0)
 
     # Secondary y-axis for Peak Current
     ax2 = ax1.twinx()
     bars2 = ax2.bar(x + bar_width/2, df["Peak Current"], width=bar_width, color='C3', label="Peak Current (A)")
 
-    ax2.set_ylabel("Peak Current (A)", color='C3', fontsize=7.5)
-    ax2.tick_params(axis='y', labelcolor='C3', labelsize=6)
+    ax2.set_ylabel("Peak Current (A)", color=text_c3, fontsize=7.5)
+    ax2.tick_params(axis='y', labelcolor=text_c3, labelsize=6)
 
     # Legends
     lines_labels = [ax.get_legend_handles_labels() for ax in [ax1, ax2]]
@@ -63,9 +78,9 @@ def plot(fig, ax1):
     # ax1.legend(lines, labels, fontsize=6, labelspacing=0.125, handlelength=1.2, handleheight=1, markerscale=0.5, borderaxespad=0.2)
 
     plt.legend(
-    lines, labels,
-        fontsize=5.25,       # font size
-        labelspacing=0.1, # vertical spacing between entries
+        lines, ["Total Power\nConsumption (mW h)", labels[1]],
+        fontsize=6,       # font size
+        labelspacing=0.75, # vertical spacing between entries
         handlelength=1, # length of lines in legend
         handleheight=1,   # height of line box
         markerscale=0.35,  # scale of markers
@@ -84,12 +99,16 @@ def plot(fig, ax1):
             label.set_horizontalalignment('left')
             lx, ly = label.get_position()
             label.set_position((lx + offset_coords[0], ly + offset_coords[1]))
-            label.set_color("C0" if container == bars1 else "C3")
+
+            label.set_color(saturate_cx(0, ls=0.5, ss=0.7) if container == bars1 else saturate_cx(3, ls=0.5, ss=0.7))
             #label.set_transform(label.get_transform() + offset)
 
     Y_AXIS_SCALE = 1.2
     ax1.set_ylim(0, max(df["Total Power Consumption (mW h)"]) * Y_AXIS_SCALE)
     ax2.set_ylim(0, max(df["Peak Current"]) * Y_AXIS_SCALE)
+
+    ax1.grid(axis='y', linestyle='--', alpha=0.35, c=desaturate_cx(0), zorder=100)
+    ax2.grid(axis='y', linestyle='--', alpha=0.2, c=desaturate_cx(3))
 
     # Move x tick labels right
     offset = mtransforms.ScaledTranslation(6/72, 4/72, fig.dpi_scale_trans)
