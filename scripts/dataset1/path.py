@@ -306,6 +306,11 @@ current_script_file = os.path.abspath(__file__)
 relative_path = os.path.relpath(current_script_file, start=os.getcwd())
 filename = relative_path.removesuffix('.py').removeprefix('scripts/').replace('/', '.')
 
+
+for odom in rmse_plots:
+    rmse = odom.cumulative_rmse[len(odom.cumulative_rmse)-1]
+    print(odom.name, "&", rmse)
+
 # Interactive preview
 if INTERACTIVE:
     plt.plot()

@@ -31,7 +31,7 @@ cmap_name = "plasma"
 def plot(fig, ax1):
     data = {
         "SLAM System": ["RTABMap-SLAM\n(LiDAR)", "ORB-SLAM3\n(RGBD)", "DROID-SLAM\n(RGBD)", "ORB-SLAM3\n(Mono)", "DROID-SLAM\n(Mono)", "MASt3R-SLAM\n(Mono)", "AnyFeature-VSLAM\n(Mono)"],
-        "Total Power Consumption (mW h)": [0.277778 * x for x in [10.5, 8.3, 9.5, 16.8, 17.5, 16.5, 9.0]],
+        "Total Power Consumption (Wh)": [x for x in [2.28, 1.8, 2.06, 3.64, 3.79, 3.58, 1.95]],
         "Peak Current": [2.1, 1.7, 1.9, 3.4, 3.5, 3.3, 1.8],
     }
 
@@ -57,10 +57,10 @@ def plot(fig, ax1):
 
     # Bar width and positions
     # Plot Total Power Consumption (primary y-axis)
-    bars1 = ax1.bar(x - bar_width/2, df["Total Power Consumption (mW h)"], color="C0", width=bar_width, label="Total Power Consumption (mW h)")
+    bars1 = ax1.bar(x - bar_width/2, df["Total Power Consumption (Wh)"], color="C0", width=bar_width, label="Total Power Consumption (Wh)")
 
     # ax1.set_xlabel("SLAM Algorithm", fontsize=9)
-    ax1.set_ylabel("Total Power Consumption (mW h)", color=text_c0, fontsize=7.5)
+    ax1.set_ylabel("Total Power Consumption (Wh)", color=text_c0, fontsize=7.5)
     ax1.set_xticks(x)
     ax1.set_xticklabels(df["SLAM System"], rotation=45, ha="right", fontsize=7)
     ax1.tick_params(axis='y', labelsize=6, labelcolor=text_c0)
@@ -78,7 +78,7 @@ def plot(fig, ax1):
     # ax1.legend(lines, labels, fontsize=6, labelspacing=0.125, handlelength=1.2, handleheight=1, markerscale=0.5, borderaxespad=0.2)
 
     plt.legend(
-        lines, ["Total Power\nConsumption (mW h)", labels[1]],
+        lines, ["Total Power\nConsumption (Wh)", labels[1]],
         fontsize=6,       # font size
         labelspacing=0.75, # vertical spacing between entries
         handlelength=1, # length of lines in legend
@@ -88,7 +88,7 @@ def plot(fig, ax1):
     )
 
     # Add data labels
-    for container, fmt in zip([bars1, bars2], ['%.1fmW h', '%.1fA']):
+    for container, fmt in zip([bars1, bars2], ['%.2fWh', '%.1fA']):
         ax = ax1 if container == bars1 else ax2
         labels = ax.bar_label(container, fmt=fmt, label_type='edge', padding=1, fontsize=7.5, rotation=35)
 
@@ -104,7 +104,7 @@ def plot(fig, ax1):
             #label.set_transform(label.get_transform() + offset)
 
     Y_AXIS_SCALE = 1.2
-    ax1.set_ylim(0, max(df["Total Power Consumption (mW h)"]) * Y_AXIS_SCALE)
+    ax1.set_ylim(0, max(df["Total Power Consumption (Wh)"]) * Y_AXIS_SCALE)
     ax2.set_ylim(0, max(df["Peak Current"]) * Y_AXIS_SCALE)
 
     ax1.grid(axis='y', linestyle='--', alpha=0.35, c=desaturate_cx(0), zorder=100)

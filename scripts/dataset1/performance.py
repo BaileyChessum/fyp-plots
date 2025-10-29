@@ -53,7 +53,7 @@ def plot(fig, ax):
     # thing = df.plot(x="SLAM System", kind="bar", ax=ax)
     bars = [
         ax.bar(x + (0*bar_width) - 1.5*bar_width, df["Peak CPU (%)"], color="C0", width=bar_width, label="Peak CPU (%)"),
-        ax.bar(x + (1*bar_width) - 1.5*bar_width, df["Peak Memory (%)"], color='C1', width=bar_width, label="Peak Current (A)"),
+        ax.bar(x + (1*bar_width) - 1.5*bar_width, df["Peak Memory (%)"], color='C1', width=bar_width, label="Peak Memory (%)"),
         ax.bar(x + (2*bar_width) - 1.5*bar_width, df["Peak I/O (%)"], color='C2', width=bar_width, label="Peak I/O (%)"),
         ax.bar(x + (3*bar_width) - 1.5*bar_width, df["Peak GPU Usage (%)"], color='C3', width=bar_width, label="Peak GPU Usage (%)")
     ]
